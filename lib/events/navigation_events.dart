@@ -1,0 +1,1 @@
+enum NavigationEvent { toHomePage, toCreateCustomDishPage }
