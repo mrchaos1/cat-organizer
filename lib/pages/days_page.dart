@@ -22,28 +22,27 @@ class _DaysPageState extends State<DaysPage> {
 
     return Scaffold(
       body: Container(
-          child: BlocBuilder<DaysListingBloc, DaysListingState>(
-              builder: (BuildContext context, state) {
-                if (state is DaysListingLoading) {
+        child: BlocBuilder<DaysListingBloc, DaysListingState>(
+          builder: (BuildContext context, state) {
+            if (state is DaysListingLoading) {
 
-                  return Center(child: CircularProgressIndicator( strokeWidth: 2.0));
+              return Center(child: CircularProgressIndicator( strokeWidth: 2.0));
 
-                } else if (state is DaysListingFetched) {
+            } else if (state is DaysListingFetched) {
 
-                  final List<Day> items = state.days.reversed.toList();
+              final List<Day> items = state.days.reversed.toList();
 
-                  return ListView(
-                    children: items.map((Day day) => ListTile(
-                        title: Text(day.calories.toString()),
-                        subtitle: Text(day.startDatetime.toIso8601String()),
-                        onTap: () => DayActionsModal.showModal(context, day)
-                    )).toList(),
-                  );
-                }
-
-                return Center(child: Text('Unknown state'));
-              }
-          )
+              return ListView(
+                children: items.map((Day day) => Card(child: ListTile(
+                    title: Text(day.calories.toString()),
+                    subtitle: Text(day.startDatetime.toIso8601String()),
+                    onTap: () => DayActionsModal.showModal(context, day)
+                ))).toList(),
+              );
+            }
+            return Center(child: Text('Unknown state'));
+          }
+        )
       ),
     );
   }

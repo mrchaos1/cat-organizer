@@ -39,17 +39,17 @@ class _HomePageState extends State<HomePage> {
 
                         } else if (state is MealsListingFetched) {
 
-                            return ListTile(
-                                contentPadding:
-                                    const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                                title: Text('${state.getTotalCalories().toString()}kCal'),
-                                trailing: RaisedButton(
-                                  child: Text('Day finish'),
-                                  onPressed: () => FinishDayModal.showModal(context, state.meals)
-                                ),
-                            );
-                        }
+                          return ListTile(
+                            contentPadding:
+                                const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                            title: Text('${state.getTotalCaloriesEaten().toStringAsFixed(2)}kCal'),
+                            trailing: RaisedButton(
+                              child: Text('Day finish'),
+                              onPressed: () => FinishDayModal.showModal(context, state)
+                            ),
+                          );
 
+                        }
                         return Center(child: Text('Unknown state'));
                       }
                     )
@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
                           return Column(
 
                             children: state.dishes.reversed.toList().map((CustomDish dish) => Card(
-                              color: Color(0xFFF0F4C3),
+                              color: Color(0xFFFFF3E0),
                               child: ListTile(
                                   contentPadding:
                                   const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    Text('${dish.getCalorieContent().toString()}kCal/100g'),
+                                    Text('${dish.getCalorieContent().toStringAsFixed(2)}kCal/100g'),
                                     Text('Total calories: ${dish.calories.toString()}kCal/100g'),
                                     Text('Result weight ${dish.getFinalWeight()}g'),
                                     Text('Pan weight ${dish.panWeight}g'),

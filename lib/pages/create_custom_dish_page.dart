@@ -26,6 +26,10 @@ class _CreateDishPageState extends State<CreateDishPage> {
   TextEditingController _panWeightController = new TextEditingController();
   TextEditingController _caloriesController = new TextEditingController();
 
+  final _titleNode = FocusNode();
+  final _weightNode = FocusNode();
+  final _panWeightNode = FocusNode();
+  final _caloriesNode = FocusNode();
 
   @override
   void initState() {
@@ -49,8 +53,12 @@ class _CreateDishPageState extends State<CreateDishPage> {
 
   }
 
-  Future<CustomDish> _saveDish(CustomDish dish) async {
-    return dish;
+  Future<CustomDish> _saveDish() async {
+    if (_formKey.currentState.validate()) {
+      BlocProvider.of<CustomDishListingBloc>(context).add(CustomDishCreatingEvent(_dish));
+      Navigator.of(context).pop();
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text('Dish has been saved!')));
+    }
   }
 
 
@@ -59,7 +67,13 @@ class _CreateDishPageState extends State<CreateDishPage> {
 
     return Scaffold(
       appBar: AppBar(
-          title: Text('Create custom dish')
+          title: Text('Edit custom dish'),
+          actions: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.save),
+              onPressed: () => _saveDish(),
+            ),
+          ],
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(8.0),
@@ -76,6 +90,10 @@ class _CreateDishPageState extends State<CreateDishPage> {
               child: Column(
                 children: <Widget>[
                   TextFormField(
+                    onEditingComplete: () => FocusScope.of(context).requestFocus(_caloriesNode),
+                    textInputAction: TextInputAction.next,
+                    focusNode: _titleNode,
+                    textCapitalization: TextCapitalization.sentences,
                     decoration: InputDecoration(
                         labelText: 'Dish title'
                     ),
@@ -84,6 +102,10 @@ class _CreateDishPageState extends State<CreateDishPage> {
                   ),
 
                   TextFormField(
+                    onEditingComplete: () => FocusScope.of(context).requestFocus(_weightNode),
+                    textInputAction: TextInputAction.next,
+                    focusNode: _caloriesNode,
+                    textCapitalization: TextCapitalization.sentences,
                     decoration: InputDecoration(
                         labelText: 'Dish calories'
                     ),
@@ -99,6 +121,9 @@ class _CreateDishPageState extends State<CreateDishPage> {
                   ),
 
                   TextFormField(
+                    onEditingComplete: () => FocusScope.of(context).requestFocus(_panWeightNode),
+                    textInputAction: TextInputAction.next,
+                    focusNode: _weightNode,
                     decoration: InputDecoration(
                         labelText: 'Dish weight'
                     ),
@@ -114,6 +139,9 @@ class _CreateDishPageState extends State<CreateDishPage> {
                   ),
 
                   TextFormField(
+                    textInputAction: TextInputAction.done,
+                    onEditingComplete: () => _saveDish(),
+                    focusNode: _panWeightNode,
                     decoration: InputDecoration(
                       labelText: 'Pan weight',
                     ),
@@ -138,14 +166,7 @@ class _CreateDishPageState extends State<CreateDishPage> {
                     child: RaisedButton(
                       color: Colors.blue,
                       child: Text('Save', style: TextStyle(color: Colors.white)),
-                      onPressed: () async {
-                        if (_formKey.currentState.validate()) {
-                          BlocProvider.of<CustomDishListingBloc>(context).add(CustomDishCreatingEvent(_dish));
-                          Navigator.of(context).pop();
-                          Scaffold.of(context).showSnackBar(SnackBar(content: Text('Dish has been saved!')));
-
-                        }
-                      },
+                      onPressed: () => _saveDish(),
                     ),
                   ),
                 ],

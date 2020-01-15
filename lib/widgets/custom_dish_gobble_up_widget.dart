@@ -1,7 +1,9 @@
 import 'package:catmanager/blocs/meals_listing_bloc.dart';
+import 'package:catmanager/blocs/states/meals_listing_states.dart';
 import 'package:catmanager/events/meal_listing_event.dart';
 import 'package:catmanager/models/custom_dish_model.dart';
 import 'package:catmanager/models/meal_model.dart';
+import 'package:catmanager/widgets/bottom_sheet_container.dart';
 import 'package:catmanager/widgets/calc_keyboard_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,7 +19,6 @@ class _CustomDishGobbleUpWidgetState extends State<CustomDishGobbleUpWidget> {
   GlobalKey<FormState> _formKey;
   TextEditingController _weightController;
   double _resultCalories = 0;
-  bool _isPortrait;
 
   @override
   void initState() {
@@ -45,48 +46,68 @@ class _CustomDishGobbleUpWidgetState extends State<CustomDishGobbleUpWidget> {
       }
     }
 
-    _isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
+    _saveMeal(List<Meal> meals) {
+      if (_formKey.currentState.validate()) {
+        _formKey.currentState.reset();
+        _updateResult();
+        final Meal meal =  Meal(calories: _resultCalories, datetime: DateTime.now(), description: '${widget.dish.title} - ${_weightController.text}g', eatenDatetime: DateTime.now());
+        BlocProvider.of<MealsListingBloc>(context).add(MealCreatingEvent(meal, meals, () {
+        }));
+        Navigator.of(context).pop();
+      }
+    }
 
-    return Container(
-      padding: EdgeInsets.all(8.0),
-      child: Builder(
-        builder: (context) => Form(
-          onChanged: () => setState(() {
-            _updateResult();
-          }),
-          key: _formKey,
-          child: Column(
-            children: <Widget>[
-
-              Text('Devoured ${_resultCalories.toStringAsFixed(2)}kCal'),
-
-              TextFormField(
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return 'Please enter some value';
-                  }
-                  return null;
-                },
-                maxLines: null,
-                keyboardType: TextInputType.number,
-                controller: _weightController,
-              ),
-              CalcKeyboardWidget(
-                controller: _weightController,
-                onPressed: () {
-                  if (_formKey.currentState.validate()) {
+    return BlocBuilder<MealsListingBloc, MealsListingState>(
+      builder: (BuildContext context, state) {
+        if (state is MealsListingFetched) {
+          return Container(
+            decoration: new BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(  topLeft: const Radius.circular(10.0), topRight: const Radius.circular(10.0))
+            ),
+            child: Builder(
+                builder: (context) => Form(
+                  onChanged: () => setState(() {
                     _updateResult();
-                    final Meal meal =  Meal(calories: _resultCalories, datetime: DateTime.now(), description: widget.dish.title);
+                  }),
+                  key: _formKey,
+                  child: Wrap(
+                    children: <Widget>[
+                      BottomSheetHeader(
+                        child: Text('Devoured ${_resultCalories.toStringAsFixed(2)} kCal', textAlign: TextAlign.center,),
+                      ),
+                      Container(
+                        color: Color(0xFFEEEEEE),
+                        child:  TextFormField(
+                          decoration: InputDecoration(
+                            fillColor: Colors.red,
+                            contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                            suffix: Text('g'),
+                            prefix: Text('+'),
+                          ),
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Please enter some value';
+                            }
+                            return null;
+                          },
+                          maxLines: 1,
+                          controller: _weightController,
+                        ),
+                      ),
+                      CalcKeyboardWidget(
+                        controller: _weightController,
+                        onPressed: () => _saveMeal(state.meals)
+                      ),
+                    ],
+                  ),
+                )
+            ),
+          );
+        }
 
-                    BlocProvider.of<MealsListingBloc>(context).add(MealCreatingEvent(meal));
-                    Navigator.of(context).pop();
-                  }
-                },
-              ),
-            ],
-          ),
-        )
-      ),
+        return Container( child: Text('Loading...'), );
+      }
     );
   }
 }

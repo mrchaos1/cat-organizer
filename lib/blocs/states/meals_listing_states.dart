@@ -17,5 +17,10 @@ class MealsListingFetched extends MealsListingState {
     meals.forEach((meal) => totalCalories += meal.calories);
     return totalCalories;
   }
-}
 
+  double getTotalCaloriesEaten() {
+    double totalCalories = 0;
+    meals.forEach((meal) => totalCalories += (meal.isEaten ? meal.calories : 0));
+    return totalCalories;
+  }
+}

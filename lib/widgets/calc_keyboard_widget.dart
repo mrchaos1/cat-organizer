@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class CalcKeyboardWidget extends StatelessWidget {
+
+
   const CalcKeyboardWidget({ Key key, @required this.controller, this.onPressed }) : super(key: key);
 
   final TextEditingController controller;
@@ -8,141 +10,54 @@ class CalcKeyboardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final _isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
+
     return Container(
       child: GridView.count(
+        physics: const NeverScrollableScrollPhysics(),
         shrinkWrap: true,
-//        crossAxisCount: _isPortrait ? 3 : 5,
-//        childAspectRatio: _isPortrait ? 2.0 : 3.0,
-        crossAxisCount: 3,
-        childAspectRatio: 2,
+        crossAxisCount: _isPortrait ? 3 : 5,
+        childAspectRatio: _isPortrait ? 2.5 : 4.0,
         children: <Widget>[
-          GridTile(
-            child: InkResponse(
-              child: Center(child: Text('+')),
-              enableFeedback: true,
-              onTap: () =>  controller.text += '+',
-            ),
-          ),
-          GridTile(
-            child: InkResponse(
-              child: Center(child: Text('*')),
-              enableFeedback: true,
-              onTap: () =>  controller.text += '*',
-            ),
-          ),
-          GridTile(
-            child: InkResponse(
-                child: Center(child: Icon(Icons.backspace)),
-                enableFeedback: true,
-                onTap: () => controller.text = (controller.text == null || controller.text.length == 0)  ? null : (controller.text.substring(0, controller.text.length - 1))
-            ),
-          ),
-          GridTile(
-            child: InkResponse(
-              child: Center(child: Text('1')),
-              enableFeedback: true,
-              onTap: () =>  controller.text += '1',
-            ),
-          ),
-          GridTile(
-            child: InkResponse(
-              child: Center(child: Text('2')),
-              enableFeedback: true,
-              onTap: () =>  controller.text += '2',
-
-            ),
-          ),
-          GridTile(
-            child: InkResponse(
-              child: Center(child: Text('3')),
-              enableFeedback: true,
-              onTap: () =>  controller.text += '3',
-
-            ),
-          ),
-          GridTile(
-            child: InkResponse(
-              child: Center(child: Text('4')),
-              enableFeedback: true,
-              onTap: () =>  controller.text += '4',
-
-            ),
-          ),
-
-          GridTile(
-            child: InkResponse(
-              child: Center(child: Text('5')),
-              enableFeedback: true,
-              onTap: () =>  controller.text += '5',
-
-            ),
-          ),
-          GridTile(
-            child: InkResponse(
-              child: Center(child: Text('6')),
-              enableFeedback: true,
-              onTap: () =>  controller.text += '6',
-
-            ),
-          ),
-
-          GridTile(
-            child: InkResponse(
-              child: Center(child: Text('7')),
-              enableFeedback: true,
-              onTap: () =>  controller.text += '7',
-
-            ),
-          ),
-          GridTile(
-            child: InkResponse(
-              child: Center(child: Text('8')),
-              enableFeedback: true,
-              onTap: () =>  controller.text += '8',
-
-            ),
-          ),
-          GridTile(
-            child: InkResponse(
-              child: Center(child: Text('9')),
-              enableFeedback: true,
-              onTap: () =>  controller.text += '9',
-
-            ),
-          ),
-          GridTile(
-            child: InkResponse(
-              child: Center(child: Text('0')),
-              enableFeedback: true,
-              onTap: () =>  controller.text += '0',
-            ),
-          ),
-          GridTile(
-            child: InkResponse(
-              child: Center(child: Text('.')),
-              enableFeedback: true,
-              onTap: () =>  controller.text += '.',
-            ),
-          ),
-          GridTile(
-            child: RaisedButton(
-                child: Center(child: Text('OK', style: TextStyle(color: Colors.blue))),
-                onPressed: () => onPressed(),
-
-//                onPressed: () {
-//                  if (_formKey.currentState.validate()) {
-//
-//                    Expression exp = Parser().parse(_mealController.text);
-//                    final double resutValue = exp.evaluate(EvaluationType.REAL, ContextModel());
-//                    final Meal meal =  Meal(calories: resutValue, datetime: DateTime.now(), description: 'Test');
-//
-//                    BlocProvider.of<MealsListingBloc>(context).add(MealCreatingEvent(meal));
-//                    _formKey.currentState.reset();
-//                  }
-//                }
-            ),
-          ),
+          KeyboardKeyWidget(Text('+', style: TextStyle(fontSize: 18.0)), () { controller.text += '+'; }),
+          KeyboardKeyWidget(Text('*', style: TextStyle(fontSize: 18.0)), () { controller.text += '*'; }),
+          KeyboardKeyWidget(Icon(Icons.backspace), () {  controller.text = (controller.text == null || controller.text.length == 0)  ? null : (controller.text.substring(0, controller.text.length - 1)); }),
+          KeyboardKeyWidget(Text('1', style: TextStyle(fontSize: 18.0)), () { controller.text += '1'; }),
+          KeyboardKeyWidget(Text('2', style: TextStyle(fontSize: 18.0)), () { controller.text += '2'; }),
+          KeyboardKeyWidget(Text('3', style: TextStyle(fontSize: 18.0)), () { controller.text += '3'; }),
+          KeyboardKeyWidget(Text('4', style: TextStyle(fontSize: 18.0)), () { controller.text += '4'; }),
+          KeyboardKeyWidget(Text('5', style: TextStyle(fontSize: 18.0)), () { controller.text += '5'; }),
+          KeyboardKeyWidget(Text('6', style: TextStyle(fontSize: 18.0)), () { controller.text += '6'; }),
+          KeyboardKeyWidget(Text('7', style: TextStyle(fontSize: 18.0)), () { controller.text += '7'; }),
+          KeyboardKeyWidget(Text('8', style: TextStyle(fontSize: 18.0)), () { controller.text += '8'; }),
+          KeyboardKeyWidget(Text('9', style: TextStyle(fontSize: 18.0)), () { controller.text += '9'; }),
+          KeyboardKeyWidget(Text('0', style: TextStyle(fontSize: 18.0)), () { controller.text += '0'; }),
+          KeyboardKeyWidget(Text('.', style: TextStyle(fontSize: 18.0)), () { controller.text += '.'; }),
+          KeyboardKeyWidget(Text('OK', style: TextStyle(fontSize: 18.0)), () { onPressed(); }),
         ],
+      ),
+    );
+  }
+
+}
+
+
+class KeyboardKeyWidget extends StatelessWidget {
+
+  const KeyboardKeyWidget(@required this.child, @required this.onTap);
+
+  final Widget child;
+  final Function onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GridTile(
+      child: InkResponse(
+        child: Center(child: child),
+        enableFeedback: true,
+        onTap: () => onTap(),
+//        onTap: () =>  controller.text += '.',
       ),
     );
   }

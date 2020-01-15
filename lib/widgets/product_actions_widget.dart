@@ -1,29 +1,21 @@
-import 'package:catmanager/blocs/custom_dish_listing_bloc.dart';
-import 'package:catmanager/blocs/meals_listing_bloc.dart';
-import 'package:catmanager/events/custom_dish_listing_event.dart';
-import 'package:catmanager/events/meal_listing_event.dart';
-import 'package:catmanager/models/custom_dish_model.dart';
-import 'package:catmanager/models/meal_model.dart';
-import 'package:catmanager/pages/create_custom_dish_page.dart';
-import 'package:catmanager/widgets/bottom_sheet_container.dart';
+import 'package:catmanager/blocs/product_listing_bloc.dart';
+import 'package:catmanager/events/product_listing_event.dart';
+import 'package:catmanager/models/product_model.dart';
+import 'package:catmanager/pages/create_product_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
-import 'package:math_expressions/math_expressions.dart';
 
-class CustomDishActionsWidget extends StatefulWidget {
-  CustomDishActionsWidget({ @required this.dish });
-  final CustomDish dish;
-  _CustomDishActionsWidgetState createState() => _CustomDishActionsWidgetState();
+class ProductActionsWidget extends StatefulWidget {
+  ProductActionsWidget({ @required this.product });
+  final Product product;
+  _ProductActionsWidgetState createState() => _ProductActionsWidgetState();
 }
 
-class _CustomDishActionsWidgetState extends State<CustomDishActionsWidget> {
-  String _formattedDateTime;
+class _ProductActionsWidgetState extends State<ProductActionsWidget> {
 
   @override
   void initState() {
     super.initState();
-    _formattedDateTime = DateFormat('HH:mm yyyy, MMM dd').format(widget.dish.datetime);
   }
 
   @override
@@ -33,12 +25,20 @@ class _CustomDishActionsWidgetState extends State<CustomDishActionsWidget> {
 
   @override
   Widget build(BuildContext context) {
-
-    return BottomSheetContainer(
-      child: Wrap(
+    return Container(
+      child: new Wrap(
         children: <Widget>[
-          BottomSheetHeader(
-            child: Text('${widget.dish.calories.toString()} kCal (${_formattedDateTime})', textAlign: TextAlign.center,),
+          Container(
+            padding: EdgeInsets.all(20.0),
+            child: Center(
+              child: Column(
+                children: <Widget>[
+                  Text('${widget.product.calorieContent.toString()}kCal/100g', style: TextStyle(color: Colors.white)),
+                  Text('${widget.product.addedDatetime.toIso8601String()}', style: TextStyle(color: Colors.white)),
+                ],
+              ),
+            ),
+            color: Colors.blue,
           ),
           ListTile(
             title: Text('Edit'),
@@ -47,12 +47,11 @@ class _CustomDishActionsWidgetState extends State<CustomDishActionsWidget> {
               Navigator.of(context).pop();
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (BuildContext context) {
-                    return CreateDishPage(
-                      customDish: widget.dish,
+                    return CreateProductPage(
+                      product: widget.product,
                     );
                   }
               ));
-
             },
           ),
           ListTile(
@@ -63,7 +62,7 @@ class _CustomDishActionsWidgetState extends State<CustomDishActionsWidget> {
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text('Delete custom dish?', style: TextStyle(fontSize: 16.0, fontStyle: FontStyle.normal, fontWeight: FontWeight.normal)),
+                    title: Text('Delete product?', style: TextStyle(fontSize: 16.0, fontStyle: FontStyle.normal, fontWeight: FontWeight.normal)),
                     actions: <Widget>[
                       FlatButton(
                         child: Text('No'),
@@ -72,7 +71,7 @@ class _CustomDishActionsWidgetState extends State<CustomDishActionsWidget> {
                       FlatButton(
                         child: Text('Yes'),
                         onPressed: () {
-                          BlocProvider.of<CustomDishListingBloc>(context).add(CustomDishDeletingEvent(widget.dish));
+                          BlocProvider.of<ProductListingBloc>(context).add(ProductDeletingEvent(widget.product));
                           Navigator.of(context).pop();
                           Navigator.of(context).pop();
                         },

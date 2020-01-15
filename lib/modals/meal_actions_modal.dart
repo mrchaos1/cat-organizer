@@ -9,6 +9,7 @@ class MealActionsModal {
   static Future showModal(BuildContext context, Meal meal) {
     final provider =  BlocProvider.of<MealsListingBloc>(context);
     return showModalBottomSheet(
+        backgroundColor: Colors.transparent,
         context: context,
         builder: (context) {
           return BlocProvider.value(

@@ -22,15 +22,18 @@ class DBProvider {
 
 	initDB() async {
 		Directory documentsDir = await getApplicationDocumentsDirectory();
-		String path = join(documentsDir.path, 'app13.db');
+		String path = join(documentsDir.path, 'app20.db');
 
 		return await openDatabase(path, version: 1, onOpen: (db) async { }, onCreate: (Database db, int version) async {
 			await db.execute('''
 				CREATE TABLE meal(
 					id INTEGER PRIMARY KEY NOT NULL,
 					calories REAL,
+					eaten_datetime INT NULL,
 					description TEXT NULL,
 					datetime INT,
+					delayed INT NULL,
+					sort_order INT,
 					day INT NULL
 				)
 			''');
@@ -41,6 +44,7 @@ class DBProvider {
 					calories REAL,
 					title TEXT NULL,
 					weight REAL,
+					weight_eaten REAL,
 					pan_weight REAL,
 					datetime INT
 				)
@@ -60,8 +64,8 @@ class DBProvider {
 					id INTEGER PRIMARY KEY NOT NULL,
 					code INTEGER,
 					title TEXT,
-					net_weight INTEGER,
-					calories REAL,
+					net_weight REAL,
+					calorie_content REAL,
 					added_datetime,
 					
 					UNIQUE(code, title)
@@ -74,9 +78,13 @@ class DBProvider {
 					product INT NULL,
 					store INT NULL,
 					price REAL,
+					quantity REAL NOT NULL,
 					datetime INT,
-					description TEXT
-
+					purchased_datetime INT,
+					eaten_datetime INT,
+					description TEXT,
+					latitude REAL,
+					longitude REAL
 				)
 			''');
 
@@ -84,9 +92,17 @@ class DBProvider {
 				CREATE TABLE store(
 					id INTEGER PRIMARY KEY NOT NULL,
 					title TEXT,
+					added_datetime INT,
 					latitude REAL,
-					longitude REAL,
-					added_datetime INT
+					longitude REAL
+				)
+			''');
+
+			await db.execute('''
+				CREATE TABLE user(
+					id INTEGER PRIMARY KEY NOT NULL,
+					name TEXT,
+					day_start INT
 				)
 			''');
 		});
@@ -112,6 +128,12 @@ class DBProvider {
 		return db.update(table, values, where: where, whereArgs: whereArgs);
 	}
 
+	Future<Batch> batch() async {
+		final Database db = await database;
+		Batch batch = db.batch();
+		return batch;
+	}
+
 	Future<List<Map<String, dynamic>>> query(String table, {
 		String where,
 		List<dynamic> whereArgs,
@@ -122,6 +144,14 @@ class DBProvider {
 		int offset}) async {
 
 		final db = await database;
-		return db.query(table, where: where, whereArgs: whereArgs);
+		return db.query(table, where: where, whereArgs: whereArgs, orderBy: orderBy, limit: limit, offset: offset, groupBy: groupBy);
 	}
+
+//	Future<List<Map<String, dynamic>>> test(search) async {
+//		final db = await database;
+//		return db.query('product', where: "title LIKE '%?%'", whereArgs: [ search ]);
+//	}
+
+
+
 }

@@ -11,6 +11,7 @@ class CustomDishActionsModal {
   static Future showModal(BuildContext context, CustomDish dish) {
     final provider =  BlocProvider.of<MealsListingBloc>(context);
     return showModalBottomSheet(
+        backgroundColor: Colors.transparent,
         context: context,
         builder: (context) {
           return BlocProvider.value(

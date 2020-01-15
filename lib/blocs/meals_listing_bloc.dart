@@ -17,6 +17,7 @@ class MealsListingBloc extends Bloc<MealsListingEvent, MealsListingState> {
     if (event is MealsFetchEvent) {
       yield* _reloadMeals();
     } else if (event is MealCreatingEvent) {
+      await _mealRepository.resort(event.meals);
       await _mealRepository.save(event.meal);
       yield* _reloadMeals();
     } else if (event is MealsListingLoading) {
@@ -24,6 +25,10 @@ class MealsListingBloc extends Bloc<MealsListingEvent, MealsListingState> {
       yield* _reloadMeals();
     } else if (event is MealDeletingEvent) {
       await _mealRepository.delete(event.meal);
+      yield* _reloadMeals();
+    } else if (event is MealsResortingEvent) {
+      yield MealsListingFetched(meals: event.meals);
+      await _mealRepository.resort(event.meals);
       yield* _reloadMeals();
     }
   }

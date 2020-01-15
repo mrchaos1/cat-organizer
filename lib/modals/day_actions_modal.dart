@@ -9,6 +9,7 @@ class DayActionsModal {
   static Future showModal(BuildContext context, Day day) {
     final provider =  BlocProvider.of<DaysListingBloc>(context);
     return showModalBottomSheet(
+        backgroundColor: Colors.transparent,
         context: context,
         builder: (context) {
           return BlocProvider.value(
